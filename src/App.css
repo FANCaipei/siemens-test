@@ -1,0 +1,13 @@
+.app {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 720px;
+  max-width: 100%;
+}
