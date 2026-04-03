@@ -25,3 +25,9 @@ if (!window.ResizeObserver) {
 
   window.ResizeObserver = ResizeObserver
 }
+
+const originalGetComputedStyle = window.getComputedStyle.bind(window)
+window.getComputedStyle = ((elt: Element, pseudoElt?: string | null) => {
+  if (pseudoElt) return originalGetComputedStyle(elt)
+  return originalGetComputedStyle(elt)
+}) as typeof window.getComputedStyle

@@ -11,7 +11,7 @@ export type TableRow = {
   id: number
   name: string
   dataType: DataType
-  defaultValue: 0 | 'TRUE'
+  defaultValue?: 0 | 'TRUE' | 'FALSE' | ''
   comment: string
 }
 

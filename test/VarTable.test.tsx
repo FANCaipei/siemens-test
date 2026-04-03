@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import VarTable from '../src/components/VarTable'
 import { DataType, useTableDataStore } from '../src/store/tableDataStore'
 
@@ -26,11 +26,12 @@ describe('VarTable', () => {
 
     render(<VarTable />)
 
-    expect(screen.queryByText('Index')).not.toBeNull()
-    expect(screen.queryByText('Name')).not.toBeNull()
-    expect(screen.queryByText('Data Type')).not.toBeNull()
-    expect(screen.queryByText('Default Value')).not.toBeNull()
-    expect(screen.queryByText('Comment')).not.toBeNull()
+    expect(screen.queryAllByText('Index').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Name').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Data Type').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Default Value').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Comment').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Actions').length).toBeGreaterThan(0)
 
     expect(screen.queryByText('5')).not.toBeNull()
     expect(screen.queryByText('speed')).not.toBeNull()
@@ -43,5 +44,86 @@ describe('VarTable', () => {
     expect(screen.queryByText(DataType.BOOL)).not.toBeNull()
     expect(screen.queryByText('TRUE')).not.toBeNull()
     expect(screen.queryByText('feature flag')).not.toBeNull()
+
+    expect(screen.queryAllByText('Delete Row')).toHaveLength(2)
+    expect(screen.queryAllByText('Export')).toHaveLength(2)
+  })
+
+  it('deletes a row after confirmation and persists via save', async () => {
+    useTableDataStore.setState({
+      tableData: [
+        {
+          id: 0,
+          name: 'a',
+          dataType: DataType.INT,
+          defaultValue: 0,
+          comment: '',
+        },
+      ],
+    })
+
+    render(<VarTable />)
+    expect(screen.queryByText('a')).not.toBeNull()
+
+    fireEvent.click(screen.getByText('Delete Row'))
+    fireEvent.click(screen.getByText('Delete'))
+
+    await waitFor(() => {
+      expect(screen.queryByText('a')).toBeNull()
+    })
+
+    expect(localStorage.getItem('siemens_table')).toBe('[]')
+  })
+
+  it('exports a row into standard text format and copies to clipboard', async () => {
+    useTableDataStore.setState({
+      tableData: [
+        {
+          id: 7,
+          name: 'isReady',
+          dataType: DataType.BOOL,
+          defaultValue: 'TRUE',
+          comment: 'System ready flag',
+        },
+      ],
+    })
+
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      writable: true,
+    })
+
+    render(<VarTable />)
+
+    fireEvent.click(screen.getByText('Export'))
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith(
+        'isReady : BOOL := TRUE; // System ready flag',
+      )
+    })
+  })
+
+  it('disables actions when permission is missing', () => {
+    useTableDataStore.setState({
+      tableData: [
+        {
+          id: 1,
+          name: 'x',
+          dataType: DataType.INT,
+          defaultValue: 0,
+          comment: '',
+        },
+      ],
+    })
+
+    render(<VarTable canDelete={false} canExport={false} />)
+
+    const deleteBtn = screen.getByText('Delete Row').closest('button')
+    const exportBtn = screen.getByText('Export').closest('button')
+
+    expect(deleteBtn?.disabled).toBe(true)
+    expect(exportBtn?.disabled).toBe(true)
   })
 })
