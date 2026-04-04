@@ -48,7 +48,6 @@ async function copyToClipboard(text: string) {
 export default function VarTable({ canDelete = true, canExport = true }: VarTableProps) {
   const tableData = useTableDataStore((s) => s.tableData)
   const deleteRow = useTableDataStore((s) => s.delete)
-  const save = useTableDataStore((s) => s.save)
 
   const columns: ColumnsType<TableRow> = [
     {
@@ -96,7 +95,6 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
             return
           }
           deleteRow(row.id)
-          save()
           message.success('Row deleted')
         }
 

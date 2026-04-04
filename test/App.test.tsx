@@ -1,9 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import App from '../src/App'
 import { DataType, useTableDataStore } from '../src/store/tableDataStore'
 
 describe('App', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    useTableDataStore.setState({ tableData: [], loadError: null, isLoading: false })
+  })
+
   it('renders VarTable with data from tableDataStore', () => {
     useTableDataStore.setState({
       tableData: [

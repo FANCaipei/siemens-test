@@ -1,12 +1,28 @@
 import './App.css'
-import { Button, Card, Space, Tooltip, Typography, message } from 'antd'
+import { useEffect, useRef } from 'react'
+import { Button, Card, Space, Spin, Tooltip, Typography, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import VarTable from './components/VarTable'
 import { DataType, useTableDataStore } from './store/tableDataStore'
 
 function App() {
   const tableData = useTableDataStore((s) => s.tableData)
-  const save = useTableDataStore((s) => s.save)
+  const isLoading = useTableDataStore((s) => s.isLoading)
+  const loadError = useTableDataStore((s) => s.loadError)
+  const load = useTableDataStore((s) => s.load)
+
+  const lastErrorRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useEffect(() => {
+    if (!loadError) return
+    if (lastErrorRef.current === loadError) return
+    lastErrorRef.current = loadError
+    message.error(loadError)
+  }, [loadError])
 
   const onAddRow = () => {
     try {
@@ -29,7 +45,6 @@ function App() {
         ],
       }))
 
-      save()
       message.success('Row added')
     } catch {
       message.error('Add row failed')
@@ -54,7 +69,9 @@ function App() {
               </Button>
             </Tooltip>
           </Space>
-          <VarTable />
+          <Spin spinning={isLoading} delay={200} tip="Loading...">
+            <VarTable />
+          </Spin>
         </Space>
       </Card>
     </div>

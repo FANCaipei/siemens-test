@@ -1,9 +1,14 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import VarTable from '../src/components/VarTable'
 import { DataType, useTableDataStore } from '../src/store/tableDataStore'
 
 describe('VarTable', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    useTableDataStore.setState({ tableData: [], loadError: null })
+  })
+
   it('renders columns and rows from tableDataStore', () => {
     useTableDataStore.setState({
       tableData: [
@@ -72,7 +77,9 @@ describe('VarTable', () => {
       expect(screen.queryByText('a')).toBeNull()
     })
 
-    expect(localStorage.getItem('siemens_table')).toBe('[]')
+    await waitFor(() => {
+      expect(localStorage.getItem('siemens_table')).toBe('[]')
+    })
   })
 
   it('exports a row into standard text format and copies to clipboard', async () => {
