@@ -18,4 +18,5 @@ npm run test
   -- utils: common functions used in the project
 -- test: tests files
 -- git-commits.txt: commit history
+-- design.md: design document
  
