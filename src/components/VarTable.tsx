@@ -11,43 +11,7 @@ type VarTableProps = {
   canExport?: boolean
 }
 
-function formatExportRow(row: TableRow) {
-  const name = row.name ?? ''
-  const dataType = (row.dataType ?? DataType.INT).toUpperCase()
-  const rawDefaultValue = row.defaultValue
-  const defaultValue =
-    typeof rawDefaultValue === 'string' ? rawDefaultValue.toUpperCase() : rawDefaultValue
-  const hasDefaultValue =
-    defaultValue !== undefined && defaultValue !== null && defaultValue !== ''
-  const comment = row.comment?.trim() ?? ''
-
-  const defaultValuePart = hasDefaultValue ? ` := ${String(defaultValue)}` : ''
-  const commentPart = comment.length > 0 ? ` // ${comment}` : ''
-
-  return `${name} : ${dataType}${defaultValuePart};${commentPart}`
-}
-
-async function copyToClipboard(text: string) {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text)
-    return
-  }
-
-  const textarea = document.createElement('textarea')
-  textarea.value = text
-  textarea.style.position = 'fixed'
-  textarea.style.left = '-9999px'
-  textarea.style.top = '-9999px'
-  document.body.appendChild(textarea)
-  textarea.focus()
-  textarea.select()
-
-  const ok = document.execCommand('copy')
-  document.body.removeChild(textarea)
-  if (!ok) throw new Error('copy_failed')
-}
-
-export default function VarTable({ canDelete = true, canExport = true }: VarTableProps) {
+export default function VarTable({ canDelete = true }: VarTableProps) {
   const {tableData, updateAll} = useTableDataStore()
   const deleteRow = useTableDataStore((s) => s.delete)
 
