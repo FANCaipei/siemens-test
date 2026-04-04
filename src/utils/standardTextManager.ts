@@ -81,10 +81,25 @@ export class StandardTextManager {
         records.shift()
         records.pop()
 
-        console.log('records', records)
-
         return Promise.all(records.map((record, idx) => {
         return this.parseOneRecord(record, idx)
         }))
+    }
+
+    static serialize(tableData: TableRow[]): string {
+        return 'VAR\n' +
+            tableData.map((row) => {
+                let result = `${row.name} : ${row.dataType}`
+                if(row.defaultValue !== undefined) {
+                    result += ` := ${row.defaultValue}`
+                }
+                result += ';'
+                if(row.comment?.trim()?.length > 0) {
+                    result += ` // ${row.comment}`
+                }
+                
+                return result
+            }).join('\n')
+        + '\nEND_VAR'
     }
 }

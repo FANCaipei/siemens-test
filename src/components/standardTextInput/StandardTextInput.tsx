@@ -2,10 +2,12 @@ import { Button, Form, Input } from 'antd'
 import { useCallback, useEffect, useState, type ChangeEvent } from 'react'
 import { StandardTextManager } from '../../utils/standardTextManager';
 import styles from './StandardTextInput.module.scss'
+import { useTableDataStore } from '../../store/tableDataStore';
 
 export default function StandardTextInput({value}: {value: string | null})  {
     const [form] = Form.useForm();
     const [text, setText] = useState(value || '')
+    const {tableData, updateAll} = useTableDataStore()
 
     useEffect(() => {
         form.setFieldValue('text', value || '')
@@ -17,18 +19,19 @@ export default function StandardTextInput({value}: {value: string | null})  {
 
     const importText = useCallback(async () => {
         const parsedData = await StandardTextManager.parse(text)
-        console.log(parsedData)
-    }, [text])
+        updateAll(parsedData)
+    }, [text, updateAll])
 
     const exportData = useCallback(() => {
-        // TODO: export data
-    }, [])
+        const serialized = StandardTextManager.serialize(tableData)
+        setText(serialized)
+    }, [tableData])
 
     return (
         <div className={styles.container}>
             <div className={styles.formContainer}>
                 <Form form={form} initialValues={{ text: value || '' }}>
-                    <Input.TextArea name="text" autoSize={{ minRows: 4, maxRows: 6 }} onChange={onTextChange} />
+                    <Input.TextArea value={text} name="text" autoSize={{ minRows: 4, maxRows: 6 }} onChange={onTextChange} />
                 </Form>
             </div>
             <div className={styles.btns}>
