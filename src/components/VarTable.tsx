@@ -164,6 +164,17 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
       title: 'Comment',
       dataIndex: 'comment',
       key: 'comment',
+      render: (_, row: TableRow) => {
+        return (
+          <CellInput
+            validator={() => Promise.resolve(null)}
+            initValue={row.comment}
+            onSave={(newValue) => {
+              updateRecordField(row, newValue, 'comment')
+            }}
+          />
+        )
+      },
     },
     {
       title: 'Actions',
