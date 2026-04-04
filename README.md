@@ -10,3 +10,11 @@ npm run dev
 ```bash
 npm run test
 ```
+
+## code structure
+-- src
+  -- components: common components
+  -- store: global states created by zustand 
+  -- utils: common functions used in the project
+-- test: tests files
+ 
