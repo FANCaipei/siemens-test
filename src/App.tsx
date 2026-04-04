@@ -4,7 +4,7 @@ import { Button, Card, Space, Spin, Tooltip, Typography, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import VarTable from './components/VarTable'
 import { DataType, useTableDataStore } from './store/tableDataStore'
-import CellInput from './components/CellInput'
+import CellInput from './components/cellInput/CellInput'
 
 function App() {
   const tableData = useTableDataStore((s) => s.tableData)

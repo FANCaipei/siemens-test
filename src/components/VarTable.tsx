@@ -1,9 +1,9 @@
-import { Button, Popconfirm, Space, Table, Tooltip, message } from 'antd'
+import { Button, Popconfirm, Select, Space, Table, Tooltip, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { DeleteOutlined, ExportOutlined } from '@ant-design/icons'
 import { useTableDataStore } from '../store/tableDataStore'
 import { DataType, type TableRow } from '../store/tableDataStore'
-import CellInput from './CellInput'
+import CellInput from './cellInput/CellInput'
 import { useCallback } from 'react'
 
 type VarTableProps = {
@@ -66,8 +66,8 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
     return validator
   }, [tableData])
 
-  const updateRecordName = useCallback((row: TableRow, newValue: string) => {
-    updateAll(tableData.map((r) => (r.id === row.id ? { ...r, name: newValue } : r)))
+  const updateRecordField = useCallback((row: TableRow, newValue: string, fieldName: string) => {
+    updateAll(tableData.map((r) => (r.id === row.id ? { ...r, [fieldName]: newValue } : r)))
   }, [tableData])
 
   const columns: ColumnsType<TableRow> = [
@@ -87,8 +87,7 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
             validator={nameValidator(row)}
             initValue={row.name ?? ''}
             onSave={(newValue) => {
-              console.log(newValue)
-              updateRecordName(row, newValue)
+              updateRecordField(row, newValue, 'name')
             }}
           />
         )
@@ -99,6 +98,17 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
       dataIndex: 'dataType',
       key: 'dataType',
       width: 140,
+      render:(_, row: TableRow) => {
+        return (
+          <Select
+            value={row.dataType ?? DataType.INT}
+            options={Object.values(DataType).map((v) => ({ label: v, value: v }))}
+            onChange={(newValue) => {
+              updateRecordField(row, newValue, 'dataType')
+            }}
+          />
+        )
+      },
     },
     {
       title: 'Default Value',
