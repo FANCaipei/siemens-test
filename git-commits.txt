@@ -1,0 +1,107 @@
+commit 2be2baf482c996fe3bbd548d2121ed9e6bb92596
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 17:29:36 2026 +0800
+
+    update readme
+
+commit dfa26fcb2835c513728d4ef116e829ea8c3da227
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 17:25:36 2026 +0800
+
+    modify readme
+
+commit b40c4a83d47ee526827c15ed852142574a22fcc4
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 17:22:01 2026 +0800
+
+    import error message
+
+commit e0f9af1fc604c33b0644a60ff8cb3dcc09064980
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 17:12:22 2026 +0800
+
+    delete useless action button
+
+commit 065fa6f17de8218ba92ad0968f4f705d7b4f4e95
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 17:09:49 2026 +0800
+
+    export datas
+
+commit 4ab7745b8c238d2e2ce37210e8d68317d6cc28a1
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 16:58:48 2026 +0800
+
+    standard text manager
+
+commit be32e56c2b58b93d7ac2393c273067c21666dcfa
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 15:46:45 2026 +0800
+
+    comment cell input
+
+commit b626c2c4acab4f78a047ce78d4276c05e3a4a9ae
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 15:45:06 2026 +0800
+
+    default value cell input
+
+commit 909f363e8cf636530a435e27b8cac608fef00d9d
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 15:33:16 2026 +0800
+
+    datatype cell select
+
+commit b3af628910849a12f7d63011ae6a812aa4c77b00
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 15:20:26 2026 +0800
+
+    cell input
+
+commit 0131fff77f86c024e5a4630cc9c5f7b1e7c4ff33
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 10:46:42 2026 +0800
+
+    create cell input component
+
+commit 8c02e36183ba2b1bf085427988f4140e7adb6191
+Author: Caipei <fancaipei@gmail.com>
+Date:   Sat Apr 4 10:17:09 2026 +0800
+
+    auto save when table data changes
+
+commit b1654b9a745ae8e85f83f652a956ab1f8283f5af
+Author: Caipei <fancaipei@gmail.com>
+Date:   Fri Apr 3 11:40:07 2026 +0800
+
+    add row, delete row, export row
+
+commit 62383b3220445e294fdbc3ca26c085fa4539eb8b
+Author: Caipei <fancaipei@gmail.com>
+Date:   Thu Apr 2 10:39:07 2026 +0800
+
+    apply VarTable in app
+
+commit e9cbc92af257ce4ecd296bdec855aba5d99a8b8b
+Author: Caipei <fancaipei@gmail.com>
+Date:   Thu Apr 2 10:30:51 2026 +0800
+
+    VarTable component
+
+commit 90750c3a26c554cedfbb7bd5dcf2b67aa367294d
+Author: Caipei <fancaipei@gmail.com>
+Date:   Thu Apr 2 10:21:31 2026 +0800
+
+    create vartable test
+
+commit 5390f3e4bf703bfa10f53c1bc51bb415a7c6670f
+Author: Caipei <fancaipei@gmail.com>
+Date:   Thu Apr 2 10:09:43 2026 +0800
+
+    create table store
+
+commit ebe0cdd70987d6b6f9292bd18cffda57fceec047
+Author: Caipei <fancaipei@gmail.com>
+Date:   Thu Apr 2 09:43:36 2026 +0800
+
+    create project

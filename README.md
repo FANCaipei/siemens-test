@@ -17,4 +17,5 @@ npm run test
   -- store: global states created by zustand 
   -- utils: common functions used in the project
 -- test: tests files
+-- git-commits.txt: commit history
  
