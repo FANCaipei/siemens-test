@@ -1,4 +1,4 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import { useCallback, useEffect, useState, type ChangeEvent } from 'react'
 import { StandardTextManager } from '../../utils/standardTextManager';
 import styles from './StandardTextInput.module.scss'
@@ -18,8 +18,12 @@ export default function StandardTextInput({value}: {value: string | null})  {
     }, [])
 
     const importText = useCallback(async () => {
-        const parsedData = await StandardTextManager.parse(text)
-        updateAll(parsedData)
+        try {
+            const parsedData = await StandardTextManager.parse(text)
+            updateAll(parsedData)
+        } catch(err: unknown) {
+            message.error(err as string)
+        }
     }, [text, updateAll])
 
     const exportData = useCallback(() => {

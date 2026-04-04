@@ -24,9 +24,9 @@ export class StandardTextManager {
             // console.log('name| ', name)
             // console.log('dataType| ', dataType)
             // console.log('defaultValue| ', defaultValue)
-          row.name = name
-          row.dataType = dataType.toUpperCase() as DataType
-          row.defaultValue = defaultValue?.toUpperCase()
+          row.name = name?.trim()
+          row.dataType = dataType?.toUpperCase()?.trim() as DataType || DataType.INT
+          row.defaultValue = defaultValue?.toUpperCase()?.trim()
           return match
         })
 
@@ -82,7 +82,7 @@ export class StandardTextManager {
         records.pop()
 
         return Promise.all(records.map((record, idx) => {
-        return this.parseOneRecord(record, idx)
+            return this.parseOneRecord(record, idx)
         }))
     }
 
