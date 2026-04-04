@@ -20,6 +20,7 @@ type TableDataState = {
   tableData: TableRow[]
   isLoading: boolean
   loadError: string | null
+  updateAll: (newTableData: TableRow[]) => void
   add: (dataType?: DataType) => void
   delete: (id: number) => void
   save: () => void
@@ -37,6 +38,10 @@ export const useTableDataStore = create<TableDataState>()(
     tableData: [],
     isLoading: false,
     loadError: null,
+    updateAll: (newTableData: TableRow[]) => {
+      set({ tableData: newTableData });
+      get().save()
+    },
     add: (dataType = DataType.INT) =>
       set((s) => {
         const maxId = s.tableData.reduce((m, r) => Math.max(m, r.id), -1)
@@ -106,7 +111,7 @@ useTableDataStore.subscribe(
         lastSavedJson = json
         localStorage.setItem(STORAGE_KEY, json)
       } catch {
-        useTableDataStore.setState({ loadError: 'Save failed' })
+        useTableDataStore.setState({ loadError: 'Load failed' })
       }
     }, 200)
   },

@@ -1,142 +1,63 @@
-import type { ChangeEvent, MouseEvent } from 'react'
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import styles from './CellInput.module.scss'
+import { Button, Form, Input, } from 'antd'
 
 export interface CellInputProps {
-  validator: (value: string) => boolean
-  initValue: string
+  validator: (rule: any, value: string) => Promise<string | null>
+  initValue: string | number | null | undefined
   onSave: (newValue: string) => void
 }
 
-const DEFAULT_ERROR_MSG = '输入格式错误'
-
 export default function CellInput({ validator, initValue, onSave }: CellInputProps) {
-  const [value, setValue] = useState<string>(initValue)
-  const [focused, setFocused] = useState<boolean>(false)
-  const [valid, setValid] = useState<boolean | null>(null)
-  const [errorMsg, setErrorMsg] = useState<string>('')
+  const [editing, setEditing] = useState<boolean>(false)
+  const [hasError, setHasError] = useState<boolean>(false)
+  const [form] = Form.useForm();
 
-  const errorId = useId()
-  const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const runValidation = useCallback(
-    (nextValue: string) => {
-      try {
-        const ok = validator(nextValue)
-        setValid(ok)
-        setErrorMsg(ok ? '' : DEFAULT_ERROR_MSG)
-        return ok
-      } catch (e) {
-        console.warn(e)
-        setValid(false)
-        setErrorMsg(DEFAULT_ERROR_MSG)
-        return false
-      }
-    },
-    [validator],
-  )
 
   useEffect(() => {
-    setValue(initValue)
-    runValidation(initValue)
-  }, [initValue, runValidation])
+    form.setFieldValue('input', initValue)
+  }, [form, initValue])
+
+  const onValuesChange = useCallback(() => {
+    setTimeout(() => {
+      setHasError(form.getFieldError('input').length > 0 ? true : false)
+    }, 0)
+  }, [form])
 
   const onFocus = useCallback(() => {
-    setFocused(true)
-  }, [])
-
-  const onBlur = useCallback(() => {
-    setFocused(false)
-  }, [])
-
-  const onChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const nextValue = e.target.value
-      setValue(nextValue)
-      runValidation(nextValue)
-    },
-    [runValidation],
-  )
-
-  const blurSelf = useCallback(() => {
-    inputRef.current?.blur()
-    setFocused(false)
+    setEditing(true)
   }, [])
 
   const onConfirm = useCallback(() => {
-    if (valid !== true) return
-    onSave(value)
-    blurSelf()
-  }, [blurSelf, onSave, valid, value])
+    console.log('form.getFieldError(): ', form.getFieldError('input'))
+    if(form.getFieldError('input').length > 0) return
+
+    onSave(form.getFieldValue('input'))
+    setEditing(false)
+  }, [form,onSave])
 
   const onCancel = useCallback(() => {
-    setValue(initValue)
-    runValidation(initValue)
-    blurSelf()
-  }, [blurSelf, initValue, runValidation])
-
-  const keepFocusOnMouseDown = useCallback((e: MouseEvent) => {
-    e.preventDefault()
-  }, [])
-
-  const inputClassName = useMemo(() => {
-    if (!focused) return `${styles.input} ${styles.inputBlur}`
-    if (valid === false) return `${styles.input} ${styles.inputFocusInvalid}`
-    if (valid === true) return `${styles.input} ${styles.inputFocusValid}`
-    return `${styles.input} ${styles.inputFocusValid}`
-  }, [focused, valid])
-
-  const confirmDisabled = valid !== true
-  const confirmBtnClassName = useMemo(() => {
-    const base = styles.btn
-    if (confirmDisabled) return `${base} ${styles.btnDisabled}`
-    return `${base} ${styles.btnPrimary}`
-  }, [confirmDisabled])
-
-  const cancelBtnClassName = useMemo(() => `${styles.btn}`, [])
+    form.setFieldValue('input', initValue)
+    setEditing(false)
+  }, [form, initValue])
 
   return (
     <div className={styles.container}>
-      <div className={styles.row}>
-        <input
-          ref={inputRef}
-          value={value}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          onChange={onChange}
-          className={inputClassName}
-          aria-invalid={valid === false}
-          aria-errormessage={valid === false ? errorId : undefined}
-        />
-        {focused ? (
-          <div className={styles.actions}>
-            <button
-              type="button"
-              onMouseDown={keepFocusOnMouseDown}
-              onClick={onConfirm}
-              disabled={confirmDisabled}
-              className={confirmBtnClassName}
-              aria-label="Confirm"
-            >
-              Confirm
-            </button>
-            <button
-              type="button"
-              onMouseDown={keepFocusOnMouseDown}
-              onClick={onCancel}
-              className={cancelBtnClassName}
-              aria-label="Cancel"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : null}
+      <Form form={form} initialValues={{ input: initValue }} onValuesChange={onValuesChange}>
+        <Form.Item name="input" rules={[{validator}]} style={{ marginBottom: '0' }}>
+          <Input onFocus={onFocus} />
+        </Form.Item>
+      </Form>
+
+      <div className={styles.btnContainer} style={{ display: editing ? 'flex' : 'none' }}>
+        <Button type="primary" onClick={onConfirm} disabled={hasError}>
+          Confirm
+        </Button>
+        <Button onClick={onCancel}>
+          Cancel
+        </Button>
       </div>
-      {focused && valid === false ? (
-        <div id={errorId} className={styles.error} role="alert">
-          {errorMsg}
-        </div>
-      ) : null}
     </div>
   )
 }

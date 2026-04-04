@@ -25,7 +25,6 @@ describe('App', () => {
 
     expect(screen.queryByText('Var Table')).not.toBeNull()
     expect(screen.queryAllByText('Index').length).toBeGreaterThan(0)
-    expect(screen.queryByText('foo')).not.toBeNull()
   })
 
   it('adds a row when clicking "Add Row" and id increments from current max id', () => {

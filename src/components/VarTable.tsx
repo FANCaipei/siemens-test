@@ -3,6 +3,8 @@ import type { ColumnsType } from 'antd/es/table'
 import { DeleteOutlined, ExportOutlined } from '@ant-design/icons'
 import { useTableDataStore } from '../store/tableDataStore'
 import { DataType, type TableRow } from '../store/tableDataStore'
+import CellInput from './CellInput'
+import { useCallback } from 'react'
 
 type VarTableProps = {
   canDelete?: boolean
@@ -46,8 +48,27 @@ async function copyToClipboard(text: string) {
 }
 
 export default function VarTable({ canDelete = true, canExport = true }: VarTableProps) {
-  const tableData = useTableDataStore((s) => s.tableData)
+  const {tableData, updateAll} = useTableDataStore()
   const deleteRow = useTableDataStore((s) => s.delete)
+
+  const nameValidator = useCallback((row: TableRow) => {
+    const validator = async (_: unknown, value: string) => {
+      let nameExist = false;
+      for (const r of tableData) {
+        if (r.id !== row.id && r.name === value) {
+          nameExist = true
+          break
+        }
+      }
+      if (nameExist) return Promise.reject('Name already exists')
+      return Promise.resolve(null)
+    }
+    return validator
+  }, [tableData])
+
+  const updateRecordName = useCallback((row: TableRow, newValue: string) => {
+    updateAll(tableData.map((r) => (r.id === row.id ? { ...r, name: newValue } : r)))
+  }, [tableData])
 
   const columns: ColumnsType<TableRow> = [
     {
@@ -60,6 +81,18 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      render:(_, row: TableRow) => {
+        return (
+          <CellInput
+            validator={nameValidator(row)}
+            initValue={row.name ?? ''}
+            onSave={(newValue) => {
+              console.log(newValue)
+              updateRecordName(row, newValue)
+            }}
+          />
+        )
+      },
     },
     {
       title: 'Data Type',
@@ -159,12 +192,14 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
   ]
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={tableData}
-      pagination={false}
-      scroll={{ x: 'max-content' }}
-    />
+    <>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={tableData}
+        pagination={false}
+        scroll={{ x: 'max-content' }}
+      />
+    </>
   )
 }
