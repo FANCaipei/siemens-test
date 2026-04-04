@@ -66,6 +66,29 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
     return validator
   }, [tableData])
 
+  const boolDefaultValueValidator = useCallback(() => {
+    const validator = async (_: unknown, value: string) => {
+      const acceptValues = ['TRUE', 'FALSE', 'true', 'false']
+      if (!acceptValues.includes(value.toUpperCase())) return Promise.reject('Invalid boolean value')
+      return Promise.resolve(null)
+    }
+    return validator
+  }, [])
+
+  const intDefaultValueValidator = useCallback(() => {
+    const validator = async (_: unknown, value: string) => {
+      if (!/^-?[0-9]+$/.test(value)) return Promise.reject('Invalid integer value')
+      try {
+        const v = Number(value)
+        if (v> 2147483648 || v < -2147483648) return Promise.reject('out of range')
+      } catch (e) {
+        return Promise.reject('Invalid integer value')
+      }
+      return Promise.resolve(null)
+    }
+    return validator
+  }, [])
+
   const updateRecordField = useCallback((row: TableRow, newValue: string, fieldName: string) => {
     updateAll(tableData.map((r) => (r.id === row.id ? { ...r, [fieldName]: newValue } : r)))
   }, [tableData])
@@ -85,7 +108,7 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
         return (
           <CellInput
             validator={nameValidator(row)}
-            initValue={row.name ?? ''}
+            initValue={row.name }
             onSave={(newValue) => {
               updateRecordField(row, newValue, 'name')
             }}
@@ -115,8 +138,27 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
       dataIndex: 'defaultValue',
       key: 'defaultValue',
       width: 160,
-      render: (v: TableRow['defaultValue']) =>
-        v === undefined || v === null ? '' : String(v),
+      render: (_, row: TableRow) => {
+        return (
+          <CellInput
+            validator={row.dataType === DataType.INT ? intDefaultValueValidator() : boolDefaultValueValidator()}
+            initValue={row.defaultValue}
+            onSave={(newValue) => {
+              switch (row.dataType) {
+                case DataType.BOOL:
+                  const nValue = newValue.toUpperCase()
+                  updateRecordField(row, nValue, 'defaultValue')
+                  break
+                case DataType.INT:
+                  updateRecordField(row, newValue, 'defaultValue')
+                  break
+                default:
+                  break
+              }
+            }}
+          />
+        )
+      },
     },
     {
       title: 'Comment',
