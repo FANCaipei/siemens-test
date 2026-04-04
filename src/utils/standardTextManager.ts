@@ -26,7 +26,7 @@ export class StandardTextManager {
             // console.log('defaultValue| ', defaultValue)
           row.name = name
           row.dataType = dataType.toUpperCase() as DataType
-          row.defaultValue = defaultValue.toUpperCase()
+          row.defaultValue = defaultValue?.toUpperCase()
           return match
         })
 

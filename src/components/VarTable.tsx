@@ -1,6 +1,6 @@
 import { Button, Popconfirm, Select, Space, Table, Tooltip, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { DeleteOutlined, ExportOutlined } from '@ant-design/icons'
+import { DeleteOutlined } from '@ant-design/icons'
 import { useTableDataStore } from '../store/tableDataStore'
 import { DataType, type TableRow } from '../store/tableDataStore'
 import CellInput from './cellInput/CellInput'
@@ -179,11 +179,10 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
     {
       title: 'Actions',
       key: 'actions',
-      width: 240,
+      width: 120,
       fixed: 'right',
       render: (_: unknown, row: TableRow) => {
         const deleteDisabled = !canDelete
-        const exportDisabled = !canExport
 
         const onDelete = () => {
           if (!canDelete) {
@@ -194,20 +193,6 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
           message.success('Row deleted')
         }
 
-        const onExport = async () => {
-          if (!canExport) {
-            message.error('No permission to export')
-            return
-          }
-          try {
-            const text = formatExportRow(row)
-            await copyToClipboard(text)
-            message.success('Copied to clipboard')
-          } catch {
-            message.error('Export failed')
-          }
-        }
-
         const deleteButton = (
           <Button
             size="small"
@@ -216,17 +201,6 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
             disabled={deleteDisabled}
           >
             Delete Row
-          </Button>
-        )
-
-        const exportButton = (
-          <Button
-            size="small"
-            icon={<ExportOutlined />}
-            disabled={exportDisabled}
-            onClick={onExport}
-          >
-            Export
           </Button>
         )
 
@@ -244,9 +218,6 @@ export default function VarTable({ canDelete = true, canExport = true }: VarTabl
                   {deleteButton}
                 </Popconfirm>
               </span>
-            </Tooltip>
-            <Tooltip title={exportDisabled ? 'No permission' : 'Export this row'}>
-              <span>{exportButton}</span>
             </Tooltip>
           </Space>
         )
