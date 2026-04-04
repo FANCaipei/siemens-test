@@ -1,10 +1,10 @@
-import './App.css'
+import styles from './App.module.scss'
 import { useEffect, useRef } from 'react'
 import { Button, Card, Space, Spin, Tooltip, Typography, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import VarTable from './components/VarTable'
 import { DataType, useTableDataStore } from './store/tableDataStore'
-import CellInput from './components/cellInput/CellInput'
+import StandardTextInput from './components/standardTextInput/StandardTextInput'
 
 function App() {
   const tableData = useTableDataStore((s) => s.tableData)
@@ -53,7 +53,10 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={styles.app}>
+      <div className={styles.standardTextContainer}>
+        <StandardTextInput value={null} />
+      </div>
       <Card className="card" variant="borderless">
         <Space orientation="vertical" size={16} style={{ width: '100%' }}>
           <Space
